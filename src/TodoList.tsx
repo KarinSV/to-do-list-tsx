@@ -17,20 +17,11 @@ export type TaskType = {
 // FC is function component
 const TodoList: React.FC<TodoListPropsType> = (props: TodoListPropsType)  => {
     const [title, setTitle] = useState<string>("")
-    console.log(title)
-    // const TodoList = (props: TodoListPropsType) => {  //more easy, above more modern
-    // const [title, setTitle] = useState<string>("")
 
-    // const taskTitleInput = useRef<HTMLInputElement>(null)
-    // const addTaskHandler =  () =>{
-    //     if (taskTitleInput.current) {
-    //         props.addTask(taskTitleInput.current.value)
-    //         taskTitleInput.current.value = ""
-    //     }
-    // }
+    // const TodoList = (props: TodoListPropsType) => {  //more easy, above more modern
+
 
     const setTitleHandler = (e: ChangeEvent<HTMLInputElement>) => setTitle(e.currentTarget.value)
-    const addTaskHandler = (e: ChangeEvent<HTMLInputElement>) => setTitle(e.currentTarget.value)
     const tasksListItems: Array<JSX.Element> = props.tasks.map((task: TaskType): JSX.Element => {
         return (
             <li>
@@ -43,11 +34,10 @@ const TodoList: React.FC<TodoListPropsType> = (props: TodoListPropsType)  => {
     })
     const titleMaxLength = 25
     const isTitleLengthTooLong: boolean = title.length > titleMaxLength
-    const isAddBtnDisabled: boolean = title.length === 0 || isTitleLengthTooLong
+    const isAddBtnDisabled: boolean = !title.length || isTitleLengthTooLong
     const titleMaxlengthWarning = isTitleLengthTooLong
-        ? <div style={{color: 'red'}}>Title is too long </div>
+        ? <div style={{color: 'red'}}>Title is too long </div> // Conditional (ternary) operator
         : null // Conditional (ternary) operator
-
     return (
         <div className="todolist">
             <h3>{props.title}</h3>
@@ -55,15 +45,16 @@ const TodoList: React.FC<TodoListPropsType> = (props: TodoListPropsType)  => {
                 <input
                     placeholder={"Please, enter title"}
                     value={title}
-                    onChange={addTaskHandler}
-                    // ref={taskTitleInput}
+                    onChange={setTitleHandler}
                 />
                 <button
                     disabled={isAddBtnDisabled}
-                    // onClick={addTaskHandler}
-                    onClick={()=> props.addTask(title)}
+                    onClick={()=> {
+                        props.addTask(title)
+                        setTitle("") // remove title after adding new input
+                    }}
                         >+</button>
-                {isTitleLengthTooLong && <div style={{color: 'red'}}>Title is too long </div> }
+                {titleMaxlengthWarning}
             </div>
             <ul>
                 {tasksListItems}
