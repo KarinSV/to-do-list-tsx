@@ -6,7 +6,6 @@ import {v1} from 'uuid';
 export type FilterValuesType = "all" | "active" | "completed"
 
 function App() {
-    console.log(typeof v1())
     const todoListTitle:string = "What to learn"
     const [tasks, setTasks] = useState<Array<TaskType>>([
         {id: v1(), title: "HTML, CSS", isDone: false},
@@ -37,9 +36,9 @@ function App() {
     const getTasksForMe = (tasksList: Array<TaskType>, filterValue: FilterValuesType) => {
         switch (filterValue) {
             case "active":
-                return tasks.filter(t=> t.isDone === false)
+                return tasks.filter(t => !t.isDone)
             case "completed":
-                return tasks.filter(t=> t.isDone === true)
+                return tasks.filter(t => t.isDone)
             default:
                 return tasks
         }

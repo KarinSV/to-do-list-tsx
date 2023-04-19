@@ -14,3 +14,8 @@
   padding: 15px;
 }
 
+/*remove bullets from ul*/
+
+ul {
+  list-style-type: none;
+}

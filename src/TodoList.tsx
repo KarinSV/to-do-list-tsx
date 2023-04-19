@@ -1,4 +1,4 @@
-import React, {ChangeEvent, FC, useRef, useState} from 'react';
+import React, {ChangeEvent, FC, useRef, KeyboardEvent, useState} from 'react';
 import {FilterValuesType} from './App';
 
 type TodoListPropsType = {
@@ -22,6 +22,10 @@ const TodoList: React.FC<TodoListPropsType> = (props: TodoListPropsType)  => {
 
 
     const setTitleHandler = (e: ChangeEvent<HTMLInputElement>) => setTitle(e.currentTarget.value)
+    const addTaskHandler = ()=> {
+        props.addTask(title)
+        setTitle("")     // Remove task from input after adding new task to list of tasks
+    }
     const tasksListItems: Array<JSX.Element> = props.tasks.map((task: TaskType): JSX.Element => {
         return (
             <li>
@@ -38,6 +42,9 @@ const TodoList: React.FC<TodoListPropsType> = (props: TodoListPropsType)  => {
     const titleMaxlengthWarning = isTitleLengthTooLong
         ? <div style={{color: 'red'}}>Title is too long </div> // Conditional (ternary) operator
         : null // Conditional (ternary) operator
+    const handlerCreator = (filter: FilterValuesType) => () => props.changeFilter(filter)  // Return function
+    const addTaskOnKeyPressHandler = (e: KeyboardEvent<HTMLInputElement>) => e.key === "Enter" && !isAddBtnDisabled && addTaskHandler() // use Enter button to adding new task
+
     return (
         <div className="todolist">
             <h3>{props.title}</h3>
@@ -46,13 +53,11 @@ const TodoList: React.FC<TodoListPropsType> = (props: TodoListPropsType)  => {
                     placeholder={"Please, enter title"}
                     value={title}
                     onChange={setTitleHandler}
+                    onKeyDown={addTaskOnKeyPressHandler}
                 />
                 <button
                     disabled={isAddBtnDisabled}
-                    onClick={()=> {
-                        props.addTask(title)
-                        setTitle("") // remove title after adding new input
-                    }}
+                    onClick={addTaskHandler}
                         >+</button>
                 {titleMaxlengthWarning}
             </div>
@@ -60,9 +65,9 @@ const TodoList: React.FC<TodoListPropsType> = (props: TodoListPropsType)  => {
                 {tasksListItems}
             </ul>
             <div>
-                <button onClick={()=>props.changeFilter("all")}>All</button>
-                <button onClick={()=>props.changeFilter("active")}>Active</button>
-                <button onClick={()=>props.changeFilter("completed")}>Completed</button>
+                <button onClick={handlerCreator("all")}>All</button>
+                <button onClick={handlerCreator("active")}>Active</button>
+                <button onClick={handlerCreator("completed")}>Completed</button>
             </div>
         </div>
     )
